@@ -25,8 +25,10 @@ public class ContractService {
 
 	public void processContract(Contract contract, int months) {
 		for (int i = 1; i <= months; i++) {
-			contract.addInstallment(new Installment(contract.getDate(),
-					onlinePaymentService.paymentFee(onlinePaymentService.interest(contract.getTotalValue(), months))));
+			double total = (contract.getTotalValue() / months)
+					+ onlinePaymentService.interest((contract.getTotalValue() / months), i);
+			total += onlinePaymentService.paymentFee(total);
+			contract.addInstallment(new Installment(contract.getDate().plusMonths(i), total));
 		}
 	}
 }
